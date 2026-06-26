@@ -168,7 +168,7 @@ async def upload_shikiho_online_file(
     current_admin_user: Annotated[UserInDb, Depends(get_admin_user)],
     file: UploadFile=File(...), 
 ):
-    fp = DATA_DIR / "html" / "shikiho-online" / file.filename
+    fp = DATA_DIR / "html" / "shikiho" / file.filename
     
     with open(fp, "wb") as b:
         b.write(await file.read())
@@ -207,16 +207,17 @@ async def download_kabutan_kessan_file(
     # ファイルをレスポンスとして返す
     return FileResponse(fp, media_type='application/octet-stream', filename=filename)
 
-@app.get("/download-shikiho-online/")
+@app.get("/download-shikiho/")
 async def download_shikiho_online_file(
     current_admin_user: Annotated[UserInDb, Depends(get_current_active_user)],
     filename: str,
 ):
-    fp = DATA_DIR / "html" / "shikiho-online" / filename
+    fp = DATA_DIR / "html" / "shikiho" / filename
 
     # ファイルが存在するか確認
     if not os.path.exists(fp):
-        raise HTTPException(status_code=404, detail="File not found")    
+        raise HTTPException(status_code=404, detail=f'File not found')    
     
     # ファイルをレスポンスとして返す
     return FileResponse(fp, media_type='application/octet-stream', filename=filename)
+
