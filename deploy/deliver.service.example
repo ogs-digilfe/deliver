@@ -1,0 +1,17 @@
+[Unit]
+Description=deliver FastAPI (uvicorn) API server
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=<SERVICE_USER>
+Group=<SERVICE_GROUP>
+WorkingDirectory=<PROJECT_ROOT>
+ExecStart=<UV_EXECUTABLE> run --frozen --no-dev uvicorn deliver.main:app --host 0.0.0.0 --port 8080
+Restart=on-failure
+RestartSec=10s
+KillMode=mixed
+
+[Install]
+WantedBy=multi-user.target

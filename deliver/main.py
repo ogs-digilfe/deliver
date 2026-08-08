@@ -10,7 +10,7 @@ from fastapi import Depends, FastAPI, HTTPException, status, File, UploadFile
 from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
 from fastapi.responses import FileResponse
 
-from lib_deliver import UserDb, get_hashed_password
+from .lib_deliver import UserDb, get_hashed_password
 
 # global objects
 app = FastAPI()
@@ -57,12 +57,6 @@ async def login(form_data: Annotated[OAuth2PasswordRequestForm, Depends()]):
     if not user_dict:
         raise HTTPException(status_code=400, detail="Incorrect username or password")
 
-    # debug
-    print("debug:")
-    print(user_dict)
-    print()
-    
-    
     user = UserInDb(**user_dict)
     hashed_password = get_hashed_password(user.salt, form_data.password)
     if not hashed_password == user.hashed_password:
@@ -220,4 +214,3 @@ async def download_shikiho_online_file(
     
     # ファイルをレスポンスとして返す
     return FileResponse(fp, media_type='application/octet-stream', filename=filename)
-

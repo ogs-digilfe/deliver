@@ -1,7 +1,7 @@
 ##################################
 # Virtual Environment
 ##################################
-venv-deliver/
+.venv/
 
 ##################################
 # Environment variables
@@ -59,6 +59,7 @@ desktop.ini
 **/output/
 **/tmp/
 memo.txt
+userdb/users
 
 ##################################
 # obsidian
