@@ -56,11 +56,11 @@ uv run python -m deliver.add_newadmin
 
 参考用のユニットファイルは `deploy/deliver.service.example` で管理する。以下のプレースホルダーを実環境の値に置き換えて使用する。
 
-| プレースホルダー | 設定する値 | 確認コマンドの例 |
-| --- | --- | --- |
-| `<SERVICE_USER>` | サービスを実行するユーザー | `whoami` |
-| `<SERVICE_GROUP>` | サービスを実行するグループ | `id -gn` |
-| `<PROJECT_ROOT>` | リポジトリの絶対パス | `pwd` |
+| プレースホルダー          | 設定する値           | 確認コマンドの例   |
+| ----------------- | --------------- | ---------- |
+| `<SERVICE_USER>`  | サービスを実行するユーザー   | `whoami`   |
+| `<SERVICE_GROUP>` | サービスを実行するグループ   | `id -gn`   |
+| `<PROJECT_ROOT>`  | リポジトリの絶対パス      | `pwd`      |
 | `<UV_EXECUTABLE>` | `uv`実行ファイルの絶対パス | `which uv` |
 
 テンプレートをsystemdのユニットファイルとして配置し、プレースホルダーを編集する。
