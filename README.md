@@ -93,6 +93,14 @@ systemdでは`uv run --frozen --no-dev`を使う。`--frozen`により起動時�
 uv run jupyter lab
 ```
 
+### テスト
+
+テストはpytestで実行する。
+
+```bash
+uv run pytest
+```
+
 ### uvを利用したPython依存関係の管理
 
 `pyproject.toml` で依存関係の意図を管理し、`uv.lock` で実際のバージョンを固定する。
