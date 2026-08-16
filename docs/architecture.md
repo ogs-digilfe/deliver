@@ -129,11 +129,14 @@ sequenceDiagram
 | `POST` | `/upload-kabutan-kessan/` | admin | `deliver/data/html/kabutan-kessan/<filename>` |
 | `POST` | `/upload-shikiho/` | admin | `deliver/data/html/shikiho/<filename>` |
 | `POST` | `/upload-shikiho-online/` | admin | `deliver/data/html/shikiho/<filename>` |
+| `POST` | `/upload-portfolio` | admin | `deliver/data/portfolio/<filename>.zip` |
 | `GET` | `/download/` | activeユーザー | `deliver/data/<filename>` |
 | `GET` | `/download-kabutan-kessan/` | activeユーザー | `deliver/data/html/kabutan-kessan/kabutan_kessan.zip` |
 | `GET` | `/download-shikiho/` | activeユーザー | `deliver/data/html/shikiho/<filename>` |
 
 アップロードされたファイルとユーザーDBはローカルファイルシステムに永続化する。一方、発行したトークンは永続化しない。
+
+`POST /upload-portfolio`はZIP拡張子のファイルのみを受け付ける。アップロード中は同一ディレクトリの一時ファイルへ書き込み、完了後に置き換えることで、不完全なファイルが保存先名で見えることを防ぐ。
 
 ## 状態とライフサイクル
 

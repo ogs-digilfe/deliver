@@ -172,6 +172,36 @@ async def upload_shikiho_online_file(
         "upload_file": file.filename
     }
 
+@app.post("/upload-portfolio")
+async def upload_portfolio_file(
+    current_admin_user: Annotated[UserInDb, Depends(get_admin_user)],
+    file: UploadFile = File(...),
+):
+    filename = file.filename
+    if not filename or Path(filename).name != filename:
+        raise HTTPException(status_code=400, detail="Invalid filename")
+    if Path(filename).suffix.lower() != ".zip":
+        raise HTTPException(status_code=400, detail="Only ZIP files are allowed")
+
+    output_dir = DATA_DIR / "portfolio"
+    output_dir.mkdir(parents=True, exist_ok=True)
+    output_path = output_dir / filename
+    temporary_path = output_dir / f".{filename}.{secrets.token_hex(8)}.tmp"
+
+    try:
+        with temporary_path.open("wb") as destination:
+            while chunk := await file.read(1024 * 1024):
+                destination.write(chunk)
+        temporary_path.replace(output_path)
+    finally:
+        temporary_path.unlink(missing_ok=True)
+        await file.close()
+
+    return {
+        "user": current_admin_user,
+        "upload_file": filename,
+    }
+
 # file download
 @app.get("/download/")
 async def download_file(
