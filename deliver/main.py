@@ -1,7 +1,8 @@
 ####
 # $ uvicorn main:app --reload --host 0.0.0.0 --port 8080
 ####
-import secrets, os
+import os
+import secrets
 from typing import Annotated, Literal
 from pydantic import BaseModel
 from datetime import date
@@ -9,6 +10,7 @@ import polars as pl
 from fastapi import Depends, FastAPI, HTTPException, status, File, UploadFile
 from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
 from fastapi.responses import FileResponse
+from starlette.background import BackgroundTask
 
 from .lib_deliver import UserDb, get_hashed_password
 
@@ -244,3 +246,48 @@ async def download_shikiho_online_file(
     
     # ファイルをレスポンスとして返す
     return FileResponse(fp, media_type='application/octet-stream', filename=filename)
+
+
+def archive_downloaded_portfolio_file(source_path: Path) -> None:
+    """Move a delivered portfolio file to the downloaded directory."""
+    downloaded_dir = DATA_DIR / "portfolio" / "downloaded"
+    downloaded_dir.mkdir(parents=True, exist_ok=True)
+    if source_path.exists():
+        source_path.replace(downloaded_dir / source_path.name)
+
+
+@app.get("/portfolio/pending")
+async def get_pending_portfolio_file_names(
+    current_user: Annotated[UserInDb, Depends(get_current_active_user)],
+):
+    portfolio_dir = DATA_DIR / "portfolio"
+    files = (
+        sorted(
+            path.name
+            for path in portfolio_dir.iterdir()
+            if path.is_file() and path.suffix.lower() == ".zip"
+        )
+        if portfolio_dir.exists()
+        else []
+    )
+    return {"files": files}
+
+
+@app.get("/download-portfolio")
+async def download_portfolio_file(
+    current_user: Annotated[UserInDb, Depends(get_current_active_user)],
+    filename: str,
+):
+    if Path(filename).name != filename or Path(filename).suffix.lower() != ".zip":
+        raise HTTPException(status_code=400, detail="Invalid filename")
+
+    source_path = DATA_DIR / "portfolio" / filename
+    if not source_path.is_file():
+        raise HTTPException(status_code=404, detail="Portfolio file not found")
+
+    return FileResponse(
+        source_path,
+        media_type="application/zip",
+        filename=filename,
+        background=BackgroundTask(archive_downloaded_portfolio_file, source_path),
+    )

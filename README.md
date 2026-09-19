@@ -106,6 +106,12 @@ uv run pytest
 `pyproject.toml` で依存関係の意図を管理し、`uv.lock` で実際のバージョンを固定する。
 依存関係を変更するときは `uv add <package>` または `uv remove <package>` を使う。
 
+## ポートフォリオファイルのダウンロード
+
+Bearer認証済みのactiveユーザーは、`GET /portfolio/pending`で未ダウンロードのZIPファイル名を取得できる。対象がない場合は`{"files": []}`を返す。
+
+Bearer認証済みのactiveユーザーは、`GET /download-portfolio?filename=<ZIPファイル名>`で`deliver/data/portfolio/`直下の指定したZIPファイルをダウンロードできる。レスポンス送信完了後、配信したファイルは`deliver/data/portfolio/downloaded/`へ移動する。指定ファイルがない場合は404を返す。
+
 ## 接続情報
 
 | 項目 | 設定値 |

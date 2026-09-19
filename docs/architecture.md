@@ -130,13 +130,19 @@ sequenceDiagram
 | `POST` | `/upload-shikiho/` | admin | `deliver/data/html/shikiho/<filename>` |
 | `POST` | `/upload-shikiho-online/` | admin | `deliver/data/html/shikiho/<filename>` |
 | `POST` | `/upload-portfolio` | admin | `deliver/data/portfolio/<filename>.zip` |
+| `GET` | `/portfolio/pending` | activeユーザー | `deliver/data/portfolio/*.zip`のファイル名一覧 |
 | `GET` | `/download/` | activeユーザー | `deliver/data/<filename>` |
 | `GET` | `/download-kabutan-kessan/` | activeユーザー | `deliver/data/html/kabutan-kessan/kabutan_kessan.zip` |
 | `GET` | `/download-shikiho/` | activeユーザー | `deliver/data/html/shikiho/<filename>` |
+| `GET` | `/download-portfolio?filename=<ZIPファイル名>` | activeユーザー | `deliver/data/portfolio/<filename>.zip` |
 
 アップロードされたファイルとユーザーDBはローカルファイルシステムに永続化する。一方、発行したトークンは永続化しない。
 
 `POST /upload-portfolio`はZIP拡張子のファイルのみを受け付ける。アップロード中は同一ディレクトリの一時ファイルへ書き込み、完了後に置き換えることで、不完全なファイルが保存先名で見えることを防ぐ。
+
+`GET /portfolio/pending`は、`deliver/data/portfolio/`直下にある未ダウンロードのZIPファイル名をソートして返す。対象がない場合は空の一覧を返す。`downloaded/`配下のファイルやZIP以外のファイルは含めない。
+
+`GET /download-portfolio`は、`filename`クエリパラメーターで指定された`deliver/data/portfolio/`直下のZIPファイルを返す。レスポンスの送信完了後、配信したZIPファイルを`deliver/data/portfolio/downloaded/`へ移動する。ZIP以外や不正なファイル名には400、指定ファイルがない場合は404を返す。
 
 ## 状態とライフサイクル
 
